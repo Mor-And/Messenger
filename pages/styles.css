@@ -1,0 +1,40 @@
+
+.messenger{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 95vh;
+}
+
+.sendBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.sendBox button {
+  width: 20%;
+  height: 26;
+}
+
+.sendBox input {
+  width: 80%;
+  height: 20;
+}
+
+.messageArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: auto;
+  max-height: 90vh;
+}
+
+.messageBlock {
+  display: inline-block;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  background:#aaa;
+  box-shadow: inset #fff 0 0 5px ;
+}
