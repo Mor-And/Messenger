@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import './styles.css';
 
 function Home() {
@@ -6,7 +6,42 @@ function Home() {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
 
+    useEffect(() => {
+        fetch('http://localhost:3001/messages', { method: "GET" })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                else
+                    throw 'Not 200'
+            })
+            .then(data => setMessages(data.messages))
+            .catch(
+                err => console.log(err)
+            );
+        return () => {
+        };
+    }, []);
+
     const sendMessage = () => {
+        fetch('http://localhost:3001/send', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: input })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                else
+                    throw 'Not 200'
+            })
+            // .then(data => console.log(data.answer))
+            .catch(
+                err => console.log(err)
+            );
         if (input) {
             setMessages([...messages, input]);
             setInput('');
