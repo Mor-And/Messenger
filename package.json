@@ -15,7 +15,12 @@
     "express": "^4.16.4",
     "next": "^8.0.3",
     "react": "^16.8.4",
-    "react-dom": "^16.8.4"
+    "react-dom": "^16.8.4",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^3.0.2",
+    "sqlite3": "^4.0.6"
   },
   "devDependencies": {},
   "description": ""

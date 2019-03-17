@@ -15,7 +15,7 @@ function Home() {
                 else
                     throw 'Not 200'
             })
-            .then(data => setMessages(data.messages))
+            .then(data => setMessages(data.messages.reverse()))
             .catch(
                 err => console.log(err)
             );
@@ -38,7 +38,6 @@ function Home() {
                 else
                     throw 'Not 200'
             })
-            // .then(data => console.log(data.answer))
             .catch(
                 err => console.log(err)
             );
@@ -65,18 +64,25 @@ function Home() {
             </div>
 
             <div className="sendBox">
-                <input
-                    type="textarea"
+                <textarea
                     onChange={e => setInput(e.target.value)}
                     onKeyPress={e => {
-                        if (e.key == 'Enter') {
-                            sendMessage();
+                        if (!e.ctrlKey) {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        }
+                        else {
+                            if (e.charCode === 13) {
+                                setInput(input + '\n')
+                            }
                         }
                     }
                     }
                     value={input}
                 >
-                </input>
+                </textarea>
                 <button
                     onClick={() => sendMessage()}
                 >
