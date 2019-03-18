@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var bodyParser = require('body-parser');
 
 var sqlite = require('sqlite');
 var SQL = require('sql-template-strings');
@@ -10,6 +9,10 @@ var SQL = require('sql-template-strings');
 const port = 3001;
 
 const dbPromise = sqlite.open('./database.sqlite', { Promise });
+
+dbPromise.then((db) => {
+    db.run("CREATE TABLE IF NOT EXISTS Messages ( id INTEGER PRIMARY KEY, text TEXT)");
+});
 
 
 io.on('connection', (socket) => {
@@ -38,8 +41,6 @@ io.on('connection', (socket) => {
 
 io.listen(port);
 console.log('listening on port ', port);
-
-
 
 // app.use(async (req, res, next) => {
 //     res.header("Access-Control-Allow-Origin", "*");
