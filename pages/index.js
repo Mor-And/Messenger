@@ -3,7 +3,7 @@ import socketIO from 'socket.io-client';
 
 import './styles.css';
 
-const socket = socketIO('192.168.1.82:3001');
+const socket = socketIO('localhost:3001');
 
 function Home() {
 
@@ -11,56 +11,29 @@ function Home() {
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        console.log(socket.connected);
         socket.emit('getMessages');
-
         socket.on('messages', (data) => {
-            console.log(data)
+            setMessages(data.reverse())
         })
-        socket.on('newMessage', (data) => {
-            console.log(data)
-        })
-        // fetch('http://localhost:3001/messages', { method: "GET" })
-        //     .then(response => {
-        //         if (response.ok) {
-        //             return response.json();
-        //         }
-        //         else
-        //             throw 'Not 200'
-        //     })
-        //     .then(data => setMessages(data.messages.reverse()))
-        //     .catch(
-        //         err => console.log(err)
-        //     );
         return () => {
         };
     }, []);
 
+    useEffect(() => {
+        socket.on('newMessage', (data) => {
+            if (data) {
+                setMessages([...messages, data]);
+            }
+        })
+
+        return () => {
+        }
+    }, [messages])
+
+
     const sendMessage = () => {
-
         socket.emit('newMeassage', { 'message': input })
-
-        // fetch('http://localhost:3001/send', {
-        //     method: "POST",
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify()
-        // })
-        //     .then(response => {
-        //         if (response.ok) {
-        //             return response.json();
-        //         }
-        //         else
-        //             throw 'Not 200'
-        //     })
-        //     .catch(
-        //         err => console.log(err)
-        //     );
-        // if (input) {
-        //     setMessages([...messages, input]);
-        //     setInput('');
-        // }
+        setInput('');
     }
 
     return (
