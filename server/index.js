@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
             if (data && data.message) {
                 db.run(SQL`INSERT Into Messages (text) VALUES (${data.message})`)
                 const lastMessages = await db.all('SELECT * FROM Messages ORDER BY id DESC LIMIT 1');
-                socket.emit('newMessage', lastMessages[0].text)
+                io.emit('newMessage', lastMessages[0].text)
             }
         } catch (err) {
             next(err);
