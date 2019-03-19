@@ -21,21 +21,18 @@ const Home = class extends React.Component {
         socket.on('messages', (data) => {
             this.setState({ ...this.state, messages: data.reverse() })
         })
+        socket.on('newMessage', (data) => {
+            if (data) {
+                console.log(1);
+                this.setState({ ...this.state, newMessage: data });
+            }
+        })
     }
 
     componentDidUpdate() {
         const { messages, newMessage } = this.state;
-
         if (newMessage) {
-            socket.on('newMessage', (data) => {
-                console.log(123);
-                if (data) {
-                    this.setState({ messages: [...messages, data], newMessage: '' });
-                }
-            })
-        }
-        else {
-            socket.off('newMessage')
+            this.setState({ messages: [...messages, newMessage], newMessage: '' });
         }
     }
 
@@ -43,7 +40,7 @@ const Home = class extends React.Component {
         const { input } = this.state;
 
         socket.emit('newMeassage', { 'message': input })
-        this.setState({ ...this.state, newMessage: input, input: '' });
+        this.setState({ ...this.state, input: '' });
     }
 
     render() {
@@ -94,13 +91,12 @@ const Home = class extends React.Component {
             </div>
         )
     }
-
-
-
 }
 
-const mapStateToProps = function (state) {
-    return {}
-}
+export default Home
 
-export default connect(mapStateToProps)(Home)
+// const mapStateToProps = function (state) {
+//     return {}
+// }
+
+// export default connect(mapStateToProps)(Home)
