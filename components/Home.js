@@ -23,7 +23,6 @@ const Home = class extends React.Component {
         })
         socket.on('newMessage', (data) => {
             if (data) {
-                console.log(1);
                 this.setState({ ...this.state, newMessage: data });
             }
         })
