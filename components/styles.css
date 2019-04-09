@@ -1,9 +1,8 @@
-
-.messenger{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 95vh;
+.messenger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 95vh;
 }
 
 .sendBox {
@@ -12,22 +11,38 @@
   justify-content: space-around;
 }
 
-.sendBox button {
+.sendBtn {
   width: 20%;
-  height: 26;
+  height: 100%;
 }
 
-.sendBox textarea {
+.sendBtnInner {
+  display: flex;
+  justify-content: center;
+}
+
+.send-icon {
+  margin: 0 10px;
+}
+
+.textArea {
   width: 80%;
-  height: 20;
+  height: 100%;
+  margin: 0 !important;
+}
+
+.messagesWrap {
+  height: 90vh;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 .messageArea {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  overflow: auto;
-  max-height: 90vh;
+  justify-content: flex-start;
+  min-height: 100%;
 }
 
 .messageBlock {
@@ -35,6 +50,7 @@
   margin: 5px;
   padding: 5px;
   border-radius: 5px;
-  background:#aaa;
+  background: #aaa;
   box-shadow: inset #fff 0 0 5px;
+  max-width: 90%;
 }

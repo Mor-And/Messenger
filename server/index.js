@@ -17,10 +17,14 @@ dbPromise.then((db) => {
 
 io.on('connection', (socket) => {
 
-    socket.on('getMessages', async () => {
+    socket.on('getMessages', async (data) => {
+        console.log(data)
         const db = await dbPromise;
-        const dbMessages = await db.all('SELECT * FROM Messages ORDER BY id DESC LIMIT 10');
-        const messages = dbMessages.map(e => e.text);
+        const dbMessages = await db.all('SELECT * FROM Messages ORDER BY id DESC LIMIT ' + data.limit + ' OFFSET ' + data.offset);
+        const messages = {};
+        dbMessages.map(e => {
+            messages[e.id] = e.text
+        })
         socket.emit('messages', messages);
     })
 
@@ -30,7 +34,7 @@ io.on('connection', (socket) => {
             if (data && data.message) {
                 db.run(SQL`INSERT Into Messages (text) VALUES (${data.message})`)
                 const lastMessages = await db.all('SELECT * FROM Messages ORDER BY id DESC LIMIT 1');
-                io.emit('newMessage', lastMessages[0].text)
+                io.emit('newMessage', { [lastMessages[0].id]: lastMessages[0].text })
             }
         } catch (err) {
             next(err);

@@ -1,34 +1,52 @@
-import React, { useState, useEffect, } from 'react';
-import { bindActionCreators, compose } from 'redux';
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useRef } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Scroller from './Scroller';
 
 import socketIO from 'socket.io-client';
 
-import './styles.css';
+import styles from './styles.css';
+
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import SendIcon from '@material-ui/icons/Send';
+import { List, ListItem } from '@material-ui/core';
 
 const socket = socketIO('localhost:3001');
 
+const limit = 10;
 
 const Home = () => {
 
     const [input, setInput] = useState('');
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
+    const [messagesResponse, setMessagesResponse] = useState({});
+    const [messages, setMessages] = useState({});
+    const [newMessage, setNewMessage] = useState({});
+    const [status, setStatus] = useState(false);
+
 
     useEffect(() => {
-        socket.emit('getMessages');
+        socket.emit('getMessages', { limit: limit, offset: 0 });
         socket.on('messages', (data) => {
-            setMessages(data.reverse())
+            setMessagesResponse({ ...data })
         })
         socket.on('newMessage', (data) => {
             if (data) {
-                setNewMessage(data);
+                setNewMessage({ ...data });
             }
         })
         return () => { }
     }, [])
+
+
     useEffect(() => {
-        setMessages([...messages, newMessage])
+        setMessages({ ...messages, ...messagesResponse })
+        setTimeout(() => setStatus(false), 300)
+        return () => { }
+    }, [messagesResponse])
+
+    useEffect(() => {
+        if (Object.keys(newMessage).length > 0)
+            setMessages({ ...newMessage, ...messages })
         return () => { }
     }, [newMessage])
 
@@ -38,24 +56,41 @@ const Home = () => {
         setInput('');
     }
 
+    const loadItems = () => {
+        if (messages && !status) {
+            socket.emit('getMessages', { limit: limit, offset: Object.keys(messages).length });
+            setStatus(true);
+        }
+    }
+
     return (
         <div className="messenger">
-
-            <div className="messageArea">
-                {
-                    messages &&
-                    messages.map((item, key) => {
-                        return (
-                            <div className="messageBlock" key={key}>
-                                {item}
-                            </div>
-                        )
-                    })
-                }
+            <div className="messagesWrap">
+                <Scroller
+                    loadMore={loadItems}
+                    hasMore={(Object.keys(messagesResponse).length % limit == 0 && !status) || false}
+                    className="messageArea"
+                >
+                    {
+                        messages && Object.keys(messages).length > 0 &&
+                        Object.keys(messages).map(key => {
+                            return (
+                                <ListItem className="messageBlock" key={key}>
+                                    {messages[key]}
+                                </ListItem>
+                            )
+                        })
+                    }
+                </Scroller>
             </div>
 
             <div className="sendBox">
-                <textarea
+                <TextField
+                    variant="outlined"
+                    multiline
+                    margin="normal"
+                    className="textArea"
+                    rowsMax="2"
                     onChange={e => setInput(e.target.value)}
                     onKeyPress={e => {
                         if (!e.ctrlKey) {
@@ -73,16 +108,22 @@ const Home = () => {
                     }
                     value={input}
                 >
-                </textarea>
-                <button
+
+                </TextField>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className="sendBtn"
                     onClick={sendMessage}
                 >
                     Send
-                    </button>
+                    <SendIcon className="send-icon" />
+                </Button>
             </div>
 
-        </div>
+        </div >
     )
 }
 
-export default Home
+export default withStyles(styles)(Home)
